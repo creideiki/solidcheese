@@ -1,0 +1,640 @@
+#LyX 1.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 2.15
+\textclass article
+\language swedish
+\inputencoding latin1
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize a4paper
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 2
+\paperpagestyle default
+
+\layout Title
+
+
+\latex latex 
+
+\backslash 
+mbox{
+\latex default 
+Solid Cheese
+\latex latex 
+}
+\layout Author
+
+Simon Elén
+\latex latex 
+ 
+\backslash 
+
+\backslash 
+
+\backslash 
+
+\backslash 
+
+\latex default 
+ 
+\latex latex 
+
+\backslash 
+texttt{
+\latex default 
+simel346@student.liu.se
+\latex latex 
+} 
+\backslash 
+and
+\latex default 
+ Marcus Eriksson
+\latex latex 
+ 
+\backslash 
+
+\backslash 
+
+\backslash 
+
+\backslash 
+
+\latex default 
+ 
+\latex latex 
+
+\backslash 
+texttt{
+\latex default 
+marer086@student.liu.se
+\latex latex 
+} 
+\backslash 
+and
+\latex default 
+ Karl-Johan Karlsson
+\latex latex 
+ 
+\backslash 
+
+\backslash 
+
+\backslash 
+
+\backslash 
+
+\latex default 
+ 
+\latex latex 
+
+\backslash 
+texttt{
+\latex default 
+karka728@student.liu.se
+\latex latex 
+} 
+\backslash 
+and
+\latex default 
+ Nils Öster
+\latex latex 
+ 
+\backslash 
+
+\backslash 
+
+\backslash 
+
+\backslash 
+
+\latex default 
+ 
+\latex latex 
+
+\backslash 
+texttt{
+\latex default 
+nilos106@student.liu.se
+\latex latex 
+}
+\layout Date
+
+24 mars 2003
+\layout Abstract
+
+Det finns två vanliga sätt att göra solidmodellering på.
+ Det ena innebär att man på förhand beräknar alla polygoner i figuren och
+ sedan renderar dem snabbt.
+ Det andra innebär att man låter en raytracer rita upp bilden.
+ Vi har valt att göra på ett tredje sätt, som kombinerar fördelarna hos
+ dessa två.
+ Vårt projekt demonstrerar denna algoritm med ett program för interaktiv
+ modellering.
+\latex latex 
+
+\backslash 
+pagebreak
+\layout Section
+
+Specifikation
+\layout Standard
+
+Vårt projekt går ut på att skapa ett interaktivt program för solidmodellering.
+ Användaren av programmet ska kunna placera ut olika sorters primitiva objekt
+ och kombinera dessa med union, snitt och differens.
+ Alla utplacerade objekt, även de "negativa", skall kunna flyttas i realtid.
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{nödvändiga}
+
+\end_inset 
+
+Nödvändiga funktioner
+\layout Itemize
+
+Rendering av CSG-träd (Constructive Solid Geometry) i realtid.
+\layout Itemize
+
+Omskrivning av CSG-träd till normalform.
+\layout Itemize
+
+Markera och flytta 3D-objekt med musen.
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{andra}
+
+\end_inset 
+
+Andra funktioner
+\layout Itemize
+
+Jämförelse av olika algoritmer för CSG-rendering.
+\layout Itemize
+
+Rendering av konkava objekt.
+\layout Itemize
+
+Automatisk uppdelning av konkava objekt i konvexa.
+\layout Itemize
+
+Stora scener.
+\layout Section
+
+Bakgrund
+\layout Subsection
+
+Solidmodellering
+\layout Standard
+
+Solidmodellering, eller CSG (Constructive Solid Geometry), är ett intuitivt
+ sätt att beskriva komplicerade modeller.
+ Det innebär att mindre objekt kan sättas samman till större med hjälp av
+ logiska operationer som snitt, differens och union.
+ I ett program som stöder solidmodellering slipper användaren explicit beskriva
+ ytan av ett komplicerat objekt.
+ Denna beräknas istället av programmet utifrån de primitiva soliderna och
+ operationerna mellan dessa.
+ En av fördelarna med detta sätt att modellera är att man i efterhand kan
+ ändra på de ingående objekten och operationerna, på sätt som vore mycket
+ komplicerade om man bara hade tillgång till polygonerna som utgör objektets
+ yta.
+ I figur 
+\begin_inset LatexCommand \ref{fig:tree}
+
+\end_inset 
+
+ skulle man t.ex.
+ enkelt kunna flytta eller ta bort ett av hålen.
+\layout Standard
+
+\begin_float fig 
+\layout Standard
+\align center 
+
+\begin_inset Figure size 283 174
+file trad.eps
+width 1 10.00
+flags 11
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{fig:tree}
+
+\end_inset 
+
+Ett CSG-träd.
+\end_float 
+\layout Subsection
+
+CSG-rendering
+\layout Standard
+
+De två vanligaste sätten att rendera CSG är:
+\layout Itemize
+
+Att beräkna polygonerna på ytan som beskrivs av CSG-trädet, och sedan rendera
+ dessa på normalt sätt, t.ex.
+ med OpenGL.
+ Detta har fördelen att renderingen är enkel, snabb och kan accelereras
+ med hårdvara.
+ Nackdelen är att beräkningen av de polygoner som ska renderas är långsam,
+ och måste göras om så snart någonting annat än kamerapositionen ändras.
+\layout Itemize
+
+Raytracing.
+ Att lägga till stöd för CSG är ett relativt enkelt ingrepp i en raytracer,
+ och sänker inte hastigheten hos den särskilt mycket.
+ Detta är tur, eftersom raytracing inte är särskilt snabbt från början.
+\layout Standard
+
+Vi har valt ett tredje, ovanligare sätt att rendera på, Sequenced Convex
+ Subtraction-algoritmen (SCS)
+\begin_inset LatexCommand \cite{an improved}
+
+\end_inset 
+
+
+\begin_inset LatexCommand \cite{a}
+
+\end_inset 
+
+.
+\layout Standard
+
+Denna algoritm arbetar likt raytracing i image space, vilket betyder att
+ alla objekt har kvar sin representation som fristående primitiver i scenen
+ och CSG-operationerna endast görs vid renderingen.
+ Detta sätt kombinerar fördelarna med de ovan nämnda sätten.
+ Renderingen kan hårdvaruaccelereras eftersom den görs med OpenGL.
+ Den kräver ingen preprocessning, så att flytta objekt och att flytta kameran
+ kräver lika mycket bearbetningstid per bildruta.
+\layout Section
+
+Implementation
+\layout Standard
+
+\begin_float fig 
+\layout Standard
+\align center 
+
+\begin_inset Figure size 283 283
+file cheese-50.eps
+width 1 10.00
+flags 11
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{fig:cheese}
+
+\end_inset 
+
+En bild producerad av vårt program -- en ost med 50 hål.
+\end_float 
+Projektet är implementerat i C++ och använder OpenGL.
+ Implementationen är uppdelad i modellerare, normaliserare och renderare.
+ Modelleraren och renderaren har dessutom extremt enkla alternativa implementati
+oner så att man t.ex.
+ kan testa den riktiga modelleraren utan att behöva ta hänsyn till eventuella
+ buggar i den riktiga renderaren.
+\layout Subsection
+
+Modellerare
+\layout Standard
+
+Modelleraren tjänar till att demonstrera CSG-renderarens egenskaper.
+ Idén med vårt projekt var att vi skulle göra CSG i realtid.
+ Eftersom vår CSG-rendering inte inbegriper någon omskrivning till nya polygoner
+ så innebär inte förändring av snittytorna mellan objekten per automatik
+ någon ökad arbetsbelastning för algoritmen.
+ Detta bör framgå när man handhar modelleraren.
+ Med hjälp av modelleraren kan man inspektera att CSG-renderingen fungerar
+ som den ska (vilket den visat sig göra), genom att utföra den steg för
+ steg.
+ I modelleraren kan man sätta ut och flytta omkring sfärer, kuber och cylindrar.
+ Man kan rotera och skala hela scenen såväl som objekten var för sig.
+ Det finns stöd för spara och ladda scener från disk.
+\layout Standard
+
+Den grafiska återkopplingen man får i användargränssnittet är ganska begränsad.
+ Alla operationer görs med musen och tangentbordskommandon utan feedback.
+ När man för muspekaren över ett objekt så visas dess trådmodell i gul färg.
+ Om man håller nere musknappen så blir trådmodellen röd och man kan nu flytta
+ den i det plan som är vinkelrätt mot skärmen och innehåller punkten kameran
+ tittar på.
+\layout Standard
+
+Modelleraren är relativt okomplicerad men krävde ändå relativt stort arbets-
+ och tankemöda på grund av de subtila fel som lätt uppstår vid matrisoperationer.
+\layout Subsection
+
+Normaliserare
+\layout Standard
+
+Normaliseraren har till uppgift att göra om CSG-trädet till normalform,
+ eftersom renderaren bara kan hantera sådana träd.
+ Normalformen kräver att alla unioner finns överst i trädet, att inga subtraktio
+ner finns under något snitt och att alla subtraktioner och snitt har ett
+ löv som högerbarn.
+ Dessa krav kan uttryckas med en mängd omskrivningsregler.
+ Ett träd görs om till normalform genom att applicera dessa omskrivningar
+ tills inga regler längre matchar.
+\layout Standard
+
+\begin_float fig 
+\layout Standard
+\align center 
+
+\begin_inset Figure size 226 258
+file normtrad.eps
+width 1 8.00
+flags 11
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{fig:normtree}
+
+\end_inset 
+
+CSG-träd från figur 
+\begin_inset LatexCommand \ref{fig:tree}
+
+\end_inset 
+
+, omskrivet till normalform.
+\end_float 
+\layout Subsection
+
+Renderare
+\layout Standard
+
+Renderaren ritar upp ett normaliserat CSG-träd.
+ Algoritmen vi använder, SCS, finns utförligt beskriven i 
+\begin_inset LatexCommand \cite{a}
+
+\end_inset 
+
+
+\begin_inset LatexCommand \cite{linear-time}
+
+\end_inset 
+
+.
+ I korthet fungerar den genom att enbart rita primitiverna i Z-buffern,
+ och låta OpenGL-operationer utföra själva CSG-beräkningen.
+ SCS använder sig av en del ovanliga funktioner i OpenGL:
+\layout Itemize
+
+Z-bufferten används både för att hitta den yta som är närmast kameran i
+ varje bildpunkt, den yta som är längst ifrån kameran, och den yta som är
+ på ungefär samma avstånd från kameran som det lagrade Z-värdet.
+\layout Itemize
+
+Stencilbufferten används för att räkna hur många av de renderade objekten
+ som täcker varje bildpunkt.
+\layout Subsection
+
+Sparade scener
+\layout Standard
+
+För att kunna kopiera scener som visar på buggar i renderaren och göra snygga
+ demon kan vi spara och ladda scener.
+ Ett textuellt format används för att undvika hårdvaruberoende för flyttal.
+ Eftersom formatet inte är ämnat att läsas av människor lagras CSG-trädet
+ i den form som är lättast att läsa och skriva av ett program, vilket är
+ omvänd polsk notation.
+ Objekts namn, som kan innehålla tecken som är syntaktiskt signifikanta
+ (t.ex.
+ mellanslag), kodas med Base64
+\begin_inset LatexCommand \cite{rfc2045}
+
+\end_inset 
+
+ för att undvika detta.
+\layout Section
+
+Intressanta problem
+\layout Standard
+
+Vi använde flera olika system under projektets utveckling.
+ Det något ovanliga sätt CSG-renderingen använder OpenGL på gjorde att skillnade
+rna mellan olika OpenGL-implementationer blev otäckt tydliga.
+ Alla system med någon sorts hårdvarustöd visade sig införa avrundningsfel
+ av olika magnitud för de mest oväntade operationer.
+ Den ursprungliga SCS-algoritmen kräver att t.ex.
+ kopiering till och från Z-bufferten inte ger avrundningsfel, något som
+ visade sig inte stämma på de flesta system vi testat på.
+ Algoritmen gick dock att modifiera för att klara detta relativt enkelt.
+\layout Section
+
+Slutsatser
+\layout Subsection
+
+Implementerade funktioner
+\layout Standard
+
+Vi har implementerat alla nödvändiga funktioner (avsnitt 
+\begin_inset LatexCommand \ref{nödvändiga}
+
+\end_inset 
+
+) och inga av de andra (avsnitt 
+\begin_inset LatexCommand \ref{andra}
+
+\end_inset 
+
+).
+\layout Standard
+
+Jämförelse mellan olika CSG-algoritmer är genomförbar, men skulle krävt
+ betydligt mer tid än vi hade tillgängligt för projektet.
+ Rendering av konkava objekt och uppdelning av konkava objekt i konvexa
+ i realtid finns det ingen bra lösning på än, men vi väntar med spänning
+ på vad Nigel Stewarts slutliga doktorsavhandling kommer att ha att säga
+ om saken.
+ Hantering av stora scener kan lånas från vanlig polygonrendering, men vi
+ hade inte tid att implementera det och dessutom är algoritmen så långsam
+ att det knappast är realistiskt med scener större än en ost eller två.
+\layout Subsection
+
+Möjliga förbättringar
+\layout Standard
+
+Det långsammaste steget i renderingen är att kopiera ut och skriva tillbaka
+ Z-bufferten.
+ Det finns OpenGL-utökningar
+\begin_inset LatexCommand \cite{gl_ext}
+
+\end_inset 
+
+ som skulle kunna göra denna operation snabbare (pixel buffers, depth textures),
+ men vi har inte haft någon hårdvara där vi kunnat testa detta.
+\layout Standard
+
+En ytterligare möjlig optimering är att i ett preprocessningssteg ta reda
+ på vilka objekt som överlappar varandra så att antalet subtraktioner kan
+ minimeras
+\begin_inset LatexCommand \cite{overlap}
+
+\end_inset 
+
+.
+ Det resultat som rapporterades (faktor 3 på mycket små modeller (<10 primitiver
+), snabbt sjunkande mot 1 med ökande modellkomplexitet) gjorde dock att
+ vi inte tyckte att det var värt att lägga tid på.
+\layout Bibliography
+\bibitem {an improved}
+
+N.
+ Stewart, G.
+ Leach, S.
+ John: 
+\emph on 
+An improved z-buffer CSG rendering algorithm
+\emph default 
+, 
+\series bold 
+1998 Eurographics/Siggraph workshop on graphics hardware
+\series default 
+, sid.
+ 25-30, augusti 1998.
+\layout Bibliography
+\bibitem {a}
+
+N.
+ Stewart, G.
+ Leach, S.
+ John: 
+\emph on 
+A z-buffer CSG rendering algorithm for convex objects
+\emph default 
+, 
+\series bold 
+The 8:th international conference in central Europe on computer graphics,
+ visualisation and interactive digital media '2000 -- WSCG 2000
+\series default 
+, vol.
+ II, sid.
+ 369-372, februari 2000.
+\layout Bibliography
+\bibitem {embedding}
+
+R.
+ Erra, N.
+ Lygeros, N.
+ Stewart: 
+\emph on 
+On minimal strings containing the elements of 
+\begin_inset Formula \( S_{n} \)
+\end_inset 
+
+ by decimation
+\emph default 
+, 
+\series bold 
+Discrete mathematics and theoretical computer science, proceedings
+\series default 
+ vol.
+ AA (2001), sid.
+ 165-176.
+\layout Bibliography
+\bibitem {linear-time}
+
+N.
+ Stewart, G.
+ Leach, S.
+ John: 
+\emph on 
+Linear-time rendering of intersected convex objects
+\emph default 
+, 
+\series bold 
+The 10:th international conference in central Europe on computer graphics,
+ visualisation and computer vision '2002 -- WSCG 200
+\series default 
+2, vol.
+ II, sid.
+ 437-444, februari 2002.
+\layout Bibliography
+\bibitem {overlap}
+
+N.
+ Stewart, G.
+ Leach, S.
+ John: 
+\emph on 
+Improved CSG rendering using overlap graph subtraction sequences
+\emph default 
+, 
+\series bold 
+International conference on computer graphics and interactive techniques
+ in Australasia and South East Asia - GRAPHITE 2003
+\series default 
+, sid.
+ 47-53.
+\layout Bibliography
+\bibitem {gl_ext}
+
+
+\series bold 
+OpenGL Extension Registry
+\series default 
+,
+\latex latex 
+ 
+\backslash 
+
+\backslash 
+
+\latex default 
+ 
+\latex latex 
+
+\backslash 
+mbox{
+\backslash 
+texttt{
+\latex default 
+http://oss.sgi.com/projects/ogl-sample/registry/
+\latex latex 
+}}
+\layout Bibliography
+\bibitem {rfc2045}
+
+N.
+ Freed
+\series bold 
+, 
+\series default 
+N.
+ Borenstein
+\series bold 
+: RFC 2045 (Multipurpose Internet Mail Extensions (MIME) part one: Format
+ of internet message bodies)
+\series default 
+, section 6.8 (Base64 Content-Transfer-Encoding)
+\the_end

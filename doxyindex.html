@@ -1,0 +1,176 @@
+//
+//   Solid Cheese - a simple CSG-SCS modeler and renderer
+//
+//   Copyright (C) 2003
+//   Simon Elén, Marcus Eriksson, Karl-Johan Karlsson, Nils Öster
+//
+//   This program is free software; you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation; either version 2 of the License, or
+//   (at your option) any later version.
+//
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public License
+//   along with this program; if not, write to the Free Software
+//   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//
+
+//
+// $Id$
+//
+
+/*!
+ * \mainpage Solid Cheese
+ *
+ * \section whatis What is Solid Cheese?
+ *
+ * Solid Cheese is a simple CSG (Constructive Solid Geometry) modeler and
+ * renderer, using the <a href="http://www.nigels.com/research/">SCS</a>
+ * (Sequenced Convex Subtraction) algorithm with the linear-time intersection
+ * addition. The name comes from the fact that one of the standard CSG demos
+ * (when a hollow pipe just isn't complex enough) is a Swiss cheese. 
+ *
+ * \section usage How do I use it?
+ *
+ * -# Download the source. Since you don't have CVS access, get a snapshot from
+ *    <a href="http://creideiki.cjb.net/computers/computers.shtml">
+ *    http://creideiki.cjb.net/computers/computers.shtml</a>.
+ * -# Build the source. You'll probably need to tweak the makefile a bit, since
+ *    there don't seem to exist two systems that do OpenGL in the same way.
+ *    The makefile includes tweaks for the systems we have built it on:
+ *    - Solaris 8
+ *    - Gentoo Linux
+ *    - Windows XP SP1 + MinGW
+ *    .
+ *    Pre-defined targets:
+ *    <dl><dt><tt>all</tt></dt>
+ *        <dd>Builds everything in debug mode.</dd>
+ *        <dt><tt>clean</tt></dt>
+ *        <dd>Removes everything but the source.</dd>
+ *        <dt><tt>solidcheese</tt></dt>
+ *        <dd>Builds the main executable in debug mode.</dd>
+ *        <dt><tt>interface_test</tt></dt>
+ *        <dd>Builds the dummy modeler and the dummy renderer in debug mode.</dd>
+ *        <dt><tt>matrix_test</tt></dt>
+ *        <dd>Builds some tests for the matrix code in debug mode.</dd>
+ *        <dt><tt>modeler_test</tt></dt>
+ *        <dd>Builds the real modeler and the dummy renderer in debug mode.</dd>
+ *        <dt><tt>renderer_test</tt></dt>
+ *        <dd>Builds the dummy modeler and the real renderer in debug mode.</dd>
+ *        <dt><tt>normalize_test</tt></dt>
+ *        <dd>Builds some tests for the tree normalizer in debug mode.</dd>
+ *        <dt><tt>glinfo</tt></dt>
+ *        <dd>Builds a program that gives you information about your OpenGL
+ *            implementation.</dd>
+ *        <dt><tt>doc</tt></dt>
+ *        <dd>Builds the automated documentation (what you're reading now).
+ *            Requires Doxygen.</dd></dl>
+ *    If you have at least GNU Make 3.77, you can also use
+ *    <dl><dt><tt>release</tt></dt>
+ *        <dd>Builds everything in release mode.</dd>
+ *        <dt><tt>debug</tt></dt>
+ *        <dd>Builds everything in debug mode.</dd></dl>
+ *    To build in release mode without GNU Make 3.77, edit the CXXFLAGS variable as
+ *    indicated in the <tt>release</tt> target. Note that a "make clean" is necessary
+ *    whenever you switch between release and debug mode.
+ *
+ * -# Run <tt>solidcheese</tt>, or whatever you chose to build.
+ * -# Use it.
+ *    - <tt>renderer_test</tt> and <tt>interface_test</tt> has only one control - to
+ *      rotate the model, press space.
+ *    - In <tt>solidcheese</tt> and <tt>modeler_test</tt> you can rotate the model freely
+ *      by holding the right mouse button. You can also move objects in the plane
+ *      perpendicular to the screen containing the point the camera is looking at by
+ *      dragging them with the left mouse button.
+ *	<A HREF="http://creideiki.cjb.net/cgi-bin/cvsweb/cvsweb.cgi/solidcheese/Attic/dok_av_modelleraren.txt?rev=1.1&content-type=text/x-cvsweb-markup&hideattic=0">Here</A> you can find a little less incomplete discription on how to use the modeler.</A>
+ *
+ * \section administrivia Who wrote it?
+ *
+ * Solid Cheese was written by Simon Elén, Marcus Eriksson, Karl-Johan Karlsson,
+ * and Nils Öster, students at the Computer Science program at
+ * <a href="http://www.liu.se/">Linköping University</a>, as a project in
+ * <a href="http://www.isy.liu.se/~ingis/TSEA55.html">TSEA55 Computer
+ * Graphics</a> in the spring of 2003. It is released under the
+ * <a href="http://www.fsf.org/licenses/gpl.html">GNU GPL license</a>.
+ *
+ * \section seealso What do I need to read to understand this?
+ *
+ * <a href="http://www.nigels.com/research/">Nigel Stewart's research page</a>
+ * has, in PDF format, all the research documents we used:<ul>
+ * <li>N. Stewart, G. Leach, S. John: "An improved  z-buffer CSG rendering
+ * algorithm". <i>1998 Eurographics/Siggraph workshop on graphics hardware</i>,
+ * pp. 25-30, Aug 1998.</li>
+ * <li>N. Stewart, G. Leach, S. John: "A z-buffer CSG rendering algorithm for
+ * convex objects". <i>The 8:th international conference in central Europe on
+ * computer graphics, visualisation and interactive digital media '2000 -
+ * WSCG 2000</i>, vol. II, pp. 369-372, Feb 2000.</li>
+ * <li>R. Erra, N. Lygeros, N. Stewart: "On minimal strings containing the
+ * elements of S<sub>n</sub> by decimation". <i>Discrete mathematics and
+ * theoretical computer science</i>, proceedings vol. AA (2001), pp. 165-176.</li>
+ * <li>N. Stewart, G. Leach, S. John: "Linear-time rendering of intersected
+ * convex objects". <i>The 10:th international conference in central Europe on
+ * computer graphics, visualisation and computer vision '2002 -
+ * WSCG 2002</i>, vol. II, pp. 437-444, Feb 2002.</li></ul>
+ * For the implementation, 3Dlabs has a good
+ * <a href="http://www.3dlabs.com/support/developer/glmanpage_index.htm">reference</a>
+ * to OpenGL.
+ *
+ * \section bugs It doesn't work!
+ *
+ * The development environments, while varied, have all used the GNU toolchain with
+ * GCC 3.x compilers. No tests have been made with other toolchains. If you try,
+ * you are on your own.
+ *
+ * If the image is split in two halves and/or everything looks light blue, you are
+ * most likely linking to an old version of the OpenGL libraries. See comment in the
+ * makefile.
+ *
+ * If <tt>modeler_test</tt> looks good but <tt>solidcheese</tt> gives black blobs in
+ * strange places, try increasing the #OPENGL_BUGGINESS constant in renderer.cpp.
+ *
+ * \section links Where can I get the latest version?
+ *
+ * Anonymous CVS access is, unfortunately, not possible at this moment. You may browse
+ * the repository with CVSweb at
+ * <a href="http://creideiki.cjb.net/cgi-bin/cvsweb/cvsweb.cgi/solidcheese/">
+ * http://creideiki.cjb.net/cgi-bin/cvsweb/cvsweb.cgi/solidcheese/</a> or get
+ * snapshots from <a href="http://creideiki.cjb.net/computers/computers.shtml">
+ * http://creideiki.cjb.net/computers/computers.shtml</a>.
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
