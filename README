@@ -1,0 +1,14 @@
+Solid Cheese, the extremely short documentation.
+
+To build the Doxygen documentation, install Doxygen
+(<URL:http://www.doxygen.org/> and run "make doc".
+
+HTML documentation ends up in doc/html/index.html.
+
+Read modeler_constants.h for the list of useable command keys in the
+modeler.
+
+There are a few test models (mostly cheese) in the test/
+directory. Note that they are *large* - an Athlon64 3200+ with a
+GeForce FX 5900XT gets about 5 FPS on cheese-50.scs (53 primitives)
+when built in release mode.
