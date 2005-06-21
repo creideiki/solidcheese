@@ -42,7 +42,7 @@ int main(int argc, char **argv)
    string extstr   = (const char *)glGetString(GL_EXTENSIONS);
 
    vector<string> extensions;
-   unsigned int p, q = 0;
+   size_t p, q = 0;
    do
    {
       p = extstr.find(' ', q);
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
         << b << " " << depth << " " << stencil << endl << endl;
 
    cout << "Extensions:" << endl;
-   for(unsigned int i = 0; i < extensions.size(); ++i)
+   for(size_t i = 0; i < extensions.size(); ++i)
    {
       cout << "   " << extensions[i] << endl;
    }
