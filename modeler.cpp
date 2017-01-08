@@ -33,6 +33,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <string>
+#include <assert.h>
 
 #include <GL/glut.h>
 

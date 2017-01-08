@@ -29,6 +29,8 @@
  */
 
 #include <cstdlib>
+#include <cstring>
+#include <assert.h>
 #include "debug.h"
 #ifdef DEBUG
 #  include <iostream>

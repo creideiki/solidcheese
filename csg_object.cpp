@@ -31,6 +31,7 @@
 #include <cmath>
 #include <iostream>
 #include <sstream>
+#include <assert.h>
 
 #include <GL/glut.h>
 

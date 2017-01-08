@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <string>
+#include <assert.h>
 
 #include "csg_tree.h"
 #include "csg_object.h"
