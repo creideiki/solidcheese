@@ -1,5 +1,22 @@
 Solid Cheese, the extremely short documentation.
 
+Read rapport/rapport.lyx for more information (in Swedish).
+
+This is a constructive solid geometry modeler and renderer, using
+Nigel Stewart's sequenced convex subtraction algorithm
+(<http://www.nigels.com/research/>), built as a university lab project
+in computer graphics in 2003.
+
+To build the programs, run "make". Requires a C++ compiler and OpenGL
+development libraries.
+
+To look at something pretty, run "./solidcheese", press "l" to load a
+model and type the file name "test/cheese-50.scs".
+
+In the modeler, right mouse button rotates the camera and left mouse
+button moves the primitive under the cursor. Switch renderer debug
+modes using the numbers keys 1-4.
+
 To build the Doxygen documentation, install Doxygen
 (<URL:http://www.doxygen.org/> and run "make doc".
 
