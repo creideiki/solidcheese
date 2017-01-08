@@ -1,0 +1,9 @@
+*.d
+*.o
+glinfo
+interface_test
+matrix_test
+modeler_test
+normalize_test
+renderer_test
+solidcheese
